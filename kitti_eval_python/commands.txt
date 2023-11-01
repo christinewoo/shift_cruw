@@ -1,0 +1,23 @@
+python evaluate.py evaluate \
+--label_path=/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/ \
+--result_path=/mnt/disk2/christine/shift_cruw/outputs/3159_ckpt_15_test/20231101_1442 \
+--label_split_file=/mnt/disk2/Data/KITTI/KITTI3D/ImageSets/test.txt \
+--current_class=0 --coco=False
+
+
+python evaluate.py evaluate \
+--label_path=/mnt/disk2/Data/KITTI/KITTI3D/training/label_2 \
+--result_path=/mnt/disk2/christine/shift_cruw/outputs/3159_ckpt_15_val/20231101_1522 \
+--label_split_file=/mnt/disk2/Data/KITTI/KITTI3D/ImageSets/val.txt \
+--current_class=0 --coco=False
+
+
+#### For Filter script ###
+Virconv Test: 
+/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/
+
+Virvonv Val: 
+/home/ipl-pc/VirConv/output/models/kitti/VirConv-S/default/eval/epoch_2/val/default/final_result/data/
+
+CKPT:
+/home/ipl-pc/cmkd/output/cfgs/kitti_models/CMKD/CMKD-scd/cmkd_kitti_R50_scd_V2_2161/default/eval/epoch_16/val/default/final_result/data
