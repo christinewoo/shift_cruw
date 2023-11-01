@@ -38,56 +38,43 @@ def txt_to_lists(gt_path, pd_path):
     return datum
 
 
-### Match ###
+### Matching cost and Hungarian Assignment ###
 import math
-def get_dist(gt, dt, metric=1):
-    # Metric #1: dist = sqrt[(xg - xd)^2 + (yg - yd)^2 + (yg - yd)^2]
-    sum_ = (gt[0] - dt[0])**2 + (gt[1] - dt[1])**2 + (gt[2] - dt[2])**2
-    return math.sqrt(sum_)  
-
-#     1    0      Z(l) 
-#   2    3       /__X(w)
-#     5    4     |
-#   6    7       Y(h) - bottom   
-# def iou(gt, pd):
-#     # filter out unwanted
-#     if gt.cls_type != 'Car':
-#         return 800 # arbitrary small
-    
-#     # X and Y [2, 3, 6, 7]
-#     x_g1, x_g2, y_g1, y_g2 = \
-#         min(gt.corners3d[2][0], gt.corners3d[0][0]), max(gt.corners3d[2][0], gt.corners3d[0][0]), \
-#         min(gt.corners3d[2][2], gt.corners3d[0][2]), max(gt.corners3d[2][2], gt.corners3d[0][2])
-#     x_p1, x_p2, y_p1, y_p2 = \
-#         min(pd.corners3d[2][0], pd.corners3d[0][0]), max(pd.corners3d[2][0], pd.corners3d[0][0]), \
-#         min(pd.corners3d[2][2], pd.corners3d[0][2]), max(pd.corners3d[2][2], pd.corners3d[0][2])
-#     area_g = (x_g2 - x_g1) * (y_g2 - y_g1)
-#     area_p = (x_p2 - x_p1) * (y_p2 - y_p1)
-#     # Find enclosed intersection
-#     x_i1, x_i2, y_i1, y_i2 = max(x_p1, x_g1), min(x_p2, x_g2), max(y_p1, y_g1), min(y_p2, y_g2)
-#     x_side = np.clip(x_i2 - x_i1, a_min=0, a_max=None)
-#     z_side = np.clip(y_i2 - y_i1, a_min=0, a_max=None)
-#     area_i = x_side * z_side
-#     area_u = area_g + area_p - area_i
-#     xy_iou = area_i / area_u
-    
-#     # print(f'dist: {get_dist(gt.loc, pd.loc)}')
-    
-#     if xy_iou <= 0:
-#         xy_iou = 300
-#     else:
-#         xy_iou *= 100
-    
-#     # print(f'iou: {xy_iou}')
-#     return xy_iou
-
 from shapely.geometry import Polygon
-def iou(gt, pd):
-    # filter out unwanted
+def get_cost(gt, pd, metric='iou'):
+    ### Distance as metric ###
+    if metric != 'iou': 
+        # dist = sqrt[(xg - xd)^2 + (yg - yd)^2 + (yg - yd)^2]
+        sum_ = (gt[0] - pd[0])**2 + (gt[1] - pd[1])**2 + (gt[2] - pd[2])**2
+        cost = math.sqrt(sum_)
+    
+    ### IOU as metric ###
+    else: 
+        # Filter out unwanted
+        if gt.cls_type != 'Car' or pd.cls_type != 'Car':
+            return 5
+        # Define two polygons
+        gt_0 = (gt.corners3d[0][0], gt.corners3d[0][2])
+        gt_1 = (gt.corners3d[1][0], gt.corners3d[1][2])
+        gt_2 = (gt.corners3d[2][0], gt.corners3d[2][2])
+        gt_3 = (gt.corners3d[3][0], gt.corners3d[3][2])
+        gt_poly = Polygon([gt_0, gt_1, gt_2, gt_3])
+        
+        pd_0 = (pd.corners3d[0][0], pd.corners3d[0][2])
+        pd_1 = (pd.corners3d[1][0], pd.corners3d[1][2])
+        pd_2 = (pd.corners3d[2][0], pd.corners3d[2][2])
+        pd_3 = (pd.corners3d[3][0], pd.corners3d[3][2])
+        pd_poly = Polygon([pd_0, pd_1, pd_2, pd_3])
+        
+        iou = gt_poly.intersection(pd_poly).area / gt_poly.union(pd_poly).area
+        cost = 1 - iou
+    return cost 
+
+def get_iou(gt, pd, theshold=0.3):
+    # Filter out unwanted
     if gt.cls_type != 'Car' or pd.cls_type != 'Car':
         return 5
-    
-    # define two polygons
+    # Define two polygons
     gt_0 = (gt.corners3d[0][0], gt.corners3d[0][2])
     gt_1 = (gt.corners3d[1][0], gt.corners3d[1][2])
     gt_2 = (gt.corners3d[2][0], gt.corners3d[2][2])
@@ -101,7 +88,10 @@ def iou(gt, pd):
     pd_poly = Polygon([pd_0, pd_1, pd_2, pd_3])
     
     iou = gt_poly.intersection(pd_poly).area / gt_poly.union(pd_poly).area
-    return (1 - iou)
+    cost = 1 - iou
+    
+    return cost
+
 
 from lap import lapjv
 import numpy as np
@@ -120,8 +110,9 @@ def get_gt_dt_pairs(datum, frame, cls='Car'):
     dist_mat = np.zeros((n, m))
     for i in range(n):
         for j in range(m):
+            dist_mat[i][j] = get_iou(gt_objs[i], dt_objs[j])
             # dist_mat[i][j] = get_dist(gt_objs[i].loc, dt_objs[j].loc, 1)
-            dist_mat[i][j] = iou(gt_objs[i], dt_objs[j])
+            # dist_mat[i][j] = get_cost(gt_objs[i], dt_objs[j], 'iou')
     
     # REF: https://github.com/gatagat/lap/blob/master/lap/_lapjv.pyx
     # Hungarian assignment (x specifies the col_dt to which row_gt is assigned)
@@ -134,8 +125,6 @@ def get_gt_dt_pairs(datum, frame, cls='Car'):
         if matched_dt_idx != -1 and dist_mat[i][matched_dt_idx] > 0:
             cur_idx_matches.append([gt_objs[i], dt_objs[matched_dt_idx]])
             kept_dt_ids.append(matched_dt_idx) #remove matched items from pd_list
-    
-    # print('-----')
     
     return cur_idx_matches, kept_dt_ids
 
