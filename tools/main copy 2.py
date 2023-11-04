@@ -73,7 +73,7 @@ def get_cost(gt, pd, metric='iou'):
 def get_iou(gt, pd):
     # Filter out unwanted
     if gt.cls_type != 'Car' or pd.cls_type != 'Car':
-        return 1
+        return 5
     # Define two polygons
     gt_0 = (gt.corners3d[0][0], gt.corners3d[0][2])
     gt_1 = (gt.corners3d[1][0], gt.corners3d[1][2])
@@ -112,6 +112,7 @@ def get_gt_dt_pairs(datum, frame, cls='Car'):
             dist_mat[i][j] = (1 - get_iou(gt_objs[i], dt_objs[j]))
             # dist_mat[i][j] = get_dist(gt_objs[i].loc, dt_objs[j].loc, 1)
             # dist_mat[i][j] = get_cost(gt_objs[i], dt_objs[j], 'iou')
+    
     # REF: https://github.com/gatagat/lap/blob/master/lap/_lapjv.pyx
     # Hungarian assignment (x specifies the col_dt to which row_gt is assigned)
     cost, x, y = lapjv(dist_mat, extend_cost=True, cost_limit=1)
@@ -120,10 +121,7 @@ def get_gt_dt_pairs(datum, frame, cls='Car'):
     cur_idx_matches = [] # gt, dt
     for i in range(n):
         matched_dt_idx = x[i]
-        if matched_dt_idx != -1:
-            # check for no iou opverlaps [1 1 1 1...]
-            if np.sum(dist_mat[i]) >= m:
-                continue
+        if matched_dt_idx != -1 and dist_mat[i][matched_dt_idx] > 0:
             cur_idx_matches.append([gt_objs[i], dt_objs[matched_dt_idx]])
             kept_dt_ids.append(matched_dt_idx) #remove matched items from pd_list
     
@@ -157,6 +155,10 @@ def main():
     for frame in tqdm(datum['gt'].keys()):
         # For each label find gt_dt pair list of (gt, dt)
         cur_idx_pairs, kept_dt_ids = get_gt_dt_pairs(datum, frame, cls='Car')
+        # DEBUG: count invalid pairs filtered 
+        if cur_idx_pairs == None:
+            invalids.append(frame)
+            continue
         # COUNT number of FP
         keep = []
         for i, obj in enumerate(datum['pd'][frame]):

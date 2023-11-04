@@ -25,8 +25,10 @@ def evaluate(label_path,
     if coco:
         return get_coco_eval_result(gt_annos, dt_annos, current_class)
     else:
-        return get_official_eval_result(gt_annos, dt_annos, current_class)
-
+        for i in range(3):
+            get_official_eval_result(gt_annos, dt_annos, i)
+        return
+        # return get_official_eval_result(gt_annos, dt_annos, current_class)
 
 if __name__ == '__main__':
     fire.Fire()

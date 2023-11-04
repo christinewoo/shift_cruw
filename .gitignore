@@ -1,1 +1,4 @@
 outputs/
+__pycache__/
+kitti_eval_python/__pycache__/
+*.pyc
