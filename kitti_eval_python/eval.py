@@ -725,7 +725,8 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
     overlap_0_5 = np.array([[0.7, 0.5, 0.5, 0.7,
                              0.5, 0.5], [0.5, 0.25, 0.25, 0.5, 0.25, 0.5],
                             [0.5, 0.25, 0.25, 0.5, 0.25, 0.5]])
-    min_overlaps = np.stack([overlap_0_7, overlap_0_5], axis=0)  # [2, 3, 5]
+    # min_overlaps = np.stack([overlap_0_7, overlap_0_5], axis=0)  # [2, 3, 5]
+    min_overlaps = np.stack([overlap_0_7], axis=0)  # [2, 3, 5]
     if dataset == 'KRADAR':
         class_to_name = {
             0: 'Sedan',
@@ -836,11 +837,9 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
                 ret_dict['%s_image_moderate_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 1, 0]
                 ret_dict['%s_image_hard_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 2, 0]
 
-    print('---- RESULTS ----')
     mat_result = result.split('\n')
     for item in mat_result:
         print(item)
-    print('---- EVAL DONE ----')
     return result, ret_dict, mAP3d_R40[0, 1, 0]
 
 

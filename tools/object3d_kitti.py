@@ -82,3 +82,10 @@ class Object3d(object):
                        self.box2d[2], self.box2d[3], self.h, self.w, self.l, self.loc[0], self.loc[1], self.loc[2],
                        self.ry)
         return kitti_str
+    
+    def to_kitti_result(self):
+        kitti_str = '%s %d %d %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f\n' \
+                    % (self.cls_type, self.truncation, int(self.occlusion), self.alpha, self.box2d[0], self.box2d[1],
+                       self.box2d[2], self.box2d[3], self.h, self.w, self.l, self.loc[0], self.loc[1], self.loc[2],
+                       self.ry, self.score)
+        return kitti_str
