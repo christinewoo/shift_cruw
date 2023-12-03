@@ -7,6 +7,40 @@ def get_objects_from_label(label_file):
     objects = [Object3d(line) for line in lines]
     return objects
 
+def get_cls_objects_from_label(label_file, cls):
+    with open(label_file, 'r') as f:
+        lines = f.readlines()
+    objects = []
+    for line in lines:
+        cur_obj = Object3d(line)
+        # Check object class
+        if cur_obj.cls_type == cls:
+            if cls == 'Pedestrian' or cls == 'Cyclist':
+                if cur_obj.score > 0.5:
+                    objects.append(cur_obj)
+            else:
+                objects.append(cur_obj)
+            # # check if object is iou >= 0.5
+            # if cur_obj.score >= 0.5:
+            #     # # Check if object is hard: t-b <= 25
+            #     # if (cur_obj.box2d[1] - cur_obj.box2d[2]) <= 0.25:
+            #     objects.append(cur_obj)
+    return objects
+
+def get_hard_labels_in_cls(label_file, cls):
+    with open(label_file, 'r') as f:
+        lines = f.readlines()
+    objects = []
+    for line in lines:
+        cur_obj = Object3d(line)
+        if cur_obj.cls_type == cls:
+            if cls == 'Pedestrian' or cls == 'Cyclist':
+                if cur_obj.score > 0.5:
+                    objects.append(cur_obj)
+            else:
+                objects.append(cur_obj)
+    return objects
+
 
 def cls_type_to_id(cls_type):
     type_to_id = {'Car': 1, 'Pedestrian': 2, 'Cyclist': 3, 'Van': 4}

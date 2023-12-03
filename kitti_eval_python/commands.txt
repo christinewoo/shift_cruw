@@ -7,9 +7,9 @@ python evaluate.py evaluate \
 
 python evaluate.py evaluate \
 --label_path=/mnt/disk2/Data/KITTI/KITTI3D/training/label_2 \
---result_path=/mnt/disk2/christine/shift_cruw/outputs/3159_ckpt_15_val/20231104_1153 \
 --label_split_file=/mnt/disk2/Data/KITTI/KITTI3D/ImageSets/val.txt \
---current_class=0 --coco=False
+--current_class=0 --coco=False \
+--result_path=/mnt/disk2/christine/shift_cruw/outputs/3159_ckpt_15_val/20231105_0022
 
 
 #### For Filter script ###
@@ -24,6 +24,15 @@ CKPT:
 
 python evaluate.py evaluate \
 --label_path=/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/ \
---result_path=/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/ \
 --label_split_file=/mnt/disk2/Data/KITTI/KITTI3D/ImageSets/test.txt \
---current_class=0 --coco=False
+--current_class=0 --coco=False \
+--result_path=/mnt/disk2/christine/shift_cruw/outputs/3159_ckpt_15_test_all/debug
+
+python evaluate.py evaluate \
+--label_path=/mnt/disk2/Data/KITTI/KITTI3D/training/label_2 \
+--label_split_file=/mnt/disk2/Data/KITTI/KITTI3D/ImageSets/val.txt \
+--current_class=0 --coco=False \
+--result_path=/mnt/disk2/christine/shift_cruw/outputs/3159_ckpt_15_val/20231104_1230
+
+
+

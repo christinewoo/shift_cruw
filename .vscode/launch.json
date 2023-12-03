@@ -5,6 +5,71 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Match TEST HARD",
+            "type": "python",
+            "request": "launch",
+            // "program": "/mnt/disk2/christine/shift_cruw/tools/main_dynamic_cls_hard.py",
+            "program": "/mnt/disk2/christine/shift_cruw/tools/main_dynamic_cls_final_main.py",
+            "console": "integratedTerminal",
+            "env": {"CUDA_VISIBLE_DEVICES":"1"},
+            "args": [
+                "--gt_path",
+                "/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/",
+                "--pd_path",
+                "/mnt/disk2/christine/monotrkd/twcc_ckpt/TRKD_8015/final_result_8015/data",
+                "--tags",
+                "8015_hard_mods"
+            ]
+        },
+        {
+            "name": "Paste_8015",
+            "type": "python",
+            "request": "launch",
+            "program": "/mnt/disk2/christine/shift_cruw/tools/main_paste_cls.py",
+            "console": "integratedTerminal",
+            "env": {"CUDA_VISIBLE_DEVICES":"1"},
+            "args": [
+                "--gt_path",
+                "/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/",
+                "--pd_path",
+                "/mnt/disk2/christine/monotrkd/twcc_ckpt/TRKD_8015/final_result_8015/data",
+                "--tags",
+                "8015_paste"
+            ]
+        },
+        {
+            "name": "Remove_8015",
+            "type": "python",
+            "request": "launch",
+            "program": "/mnt/disk2/christine/shift_cruw/tools/main_pure_rm_cls.py",
+            "console": "integratedTerminal",
+            "env": {"CUDA_VISIBLE_DEVICES":"1"},
+            "args": [
+                "--gt_path",
+                "/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/",
+                "--pd_path",
+                "/mnt/disk2/christine/monotrkd/twcc_ckpt/TRKD_8015/final_result_8015/data",
+                "--tags",
+                "8015_cleaned"
+            ]
+        },
+        {
+            "name": "Match TEST ALL",
+            "type": "python",
+            "request": "launch",
+            "program": "/mnt/disk2/christine/shift_cruw/tools/main_dynamic_cls.py",
+            "console": "integratedTerminal",
+            "env": {"CUDA_VISIBLE_DEVICES":"1"},
+            "args": [
+                "--gt_path",
+                "/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/",
+                "--pd_path",
+                "/home/ipl-pc/cmkd/output/cfgs/kitti_models/CMKD/CMKD-scd/cmkd_kitti_R50_scd_V2_test/default/eval/3159_epoch_15/test/default/final_result/data",
+                "--tags",
+                "3159_ckpt_15_test_all"
+            ]
+        },
+        {
             "name": "Match VAL",
             "type": "python",
             "request": "launch",
@@ -38,5 +103,41 @@
                 "3159_ckpt_15_test"
             ]
         },
+        {
+            "name": "Match TEST-dynamic",
+            "type": "python",
+            "request": "launch",
+            "program": "/mnt/disk2/christine/shift_cruw/tools/main_dynamic.py",
+            "console": "integratedTerminal",
+            // "cwd": "${workspaceFolder}/tools",
+            "env": {"CUDA_VISIBLE_DEVICES":"1"},
+            "args": [
+                "--gt_path",
+                "/home/ipl-pc/VirConv/output/models/kitti/VirConv-S-test/default/eval/epoch_2/test/default/final_result/data/",
+                "--pd_path",
+                "/home/ipl-pc/cmkd/output/cfgs/kitti_models/CMKD/CMKD-scd/cmkd_kitti_R50_scd_V2_test/default/eval/3159_epoch_15/test/default/final_result/data",
+                "--tags",
+                "3159_ckpt_15_test"
+            ]
+        },
+        {
+            "name": "Match VAL-dynamics",
+            "type": "python",
+            "request": "launch",
+            "program": "/mnt/disk2/christine/shift_cruw/tools/main_dynamic.py",
+            "console": "integratedTerminal",
+            // "cwd": "${workspaceFolder}/tools",
+            "env": {"CUDA_VISIBLE_DEVICES":"1"},
+            "args": [
+                "--gt_path",
+                "/home/ipl-pc/VirConv/output/models/kitti/VirConv-S/default/eval/epoch_2/val/default/final_result/data/",
+                "--pd_path",
+                "/home/ipl-pc/cmkd/output/cfgs/kitti_models/CMKD/CMKD-scd/cmkd_kitti_R50_scd_V2_3159/default/eval/epoch_15/val/default/final_result/data",
+                "--tags",
+                "3159_ckpt_15_val"
+            ]
+        },
+
     ]
 }
+
